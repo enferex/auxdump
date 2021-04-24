@@ -5,8 +5,12 @@
 
 #ifdef __x86_64__
 typedef Elf64_auxv_t AuxType;
+#define FMT_HEX "0x%016lx"
+#define FMT_DEC "%lu"
 #elif __i386__
 typedef Elf32_auxv_t AuxType;
+#define FMT_HEX "0x%08x"
+#define FMT_DEC "%u"
 #else
 #error "This is tool is only supported on 32 and 64 bit X86 targets."
 #endif
@@ -23,7 +27,7 @@ static void dump_aux(const AuxType *auxp) {
     // https://github.com/torvalds/linux/blob/f40ddce88593482919761f74910f42f4b84c004b/fs/binfmt_elf.c#L256
 #define CASE(_x)                                       \
   case _x:                                             \
-    printf("%-16s: 0x%016lx\n", #_x, aux->a_un.a_val); \
+    printf("%-16s: " FMT_HEX "\n", #_x, aux->a_un.a_val); \
     break
     switch (aux->a_type) {
       CASE(AT_IGNORE);
@@ -75,7 +79,7 @@ static void dump_aux(const AuxType *auxp) {
         break;
       }
       default:
-        printf("Unknown AT_ type %lu (see elf.h)\n", aux->a_type);
+        printf("Unknown AT_ type " FMT_DEC " (see elf.h)\n", aux->a_type);
     }
   }
 }
