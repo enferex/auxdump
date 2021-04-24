@@ -17,6 +17,7 @@ References
 * [glibc](https://www.gnu.org/software/libc/) source (rtld.c, dl-sysdep.c, libc-start.c).
 * [linux kernel](https://www.kernel.org) source (binfmt_elf.c)
 * sys/auxv.h: Declares getauxval().
+* [Intel 64/32](https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf) Software Developer's Manual (Volume 2).
 
 Contact
 -------

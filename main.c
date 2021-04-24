@@ -15,6 +15,24 @@ typedef Elf32_auxv_t AuxType;
 #error "This is tool is only supported on 32 and 64 bit X86 targets."
 #endif
 
+// The encoded CPUID values (represented in AT_HWCAP) are from the Intel manual
+// Figure 3-8:
+// https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
+static const char *CPUID_1_EDX[] = {
+    "FPU",  "VME",  "DE",       "PSE",   "TSC",      "MSR", "PAE",      "MCE",
+    "CX8",  "APIC", "Reserved", "SEP",   "MTRR",     "PGE", "MCA",      "CMOV",
+    "PAT",  "PSE",  "PSN",      "CLFSH", "Reserved", "DS",  "ACPI",     "MMX",
+    "FXSR", "SSE",  "SSE2",     "SS",    "HTT",      "TM",  "Reserved", "PBE"};
+
+void dump_x86_capabilities(uint32_t hwcap) {
+  // The linux kernel populates AT_HWCAP for x86 processors using the data
+  // from the cpuid instruction.  Specifically the values encoded in the EDX
+  // register. See:
+  // https://github.com/torvalds/linux/blob/f40ddce8/arch/x86/include/asm/elf.h#L260
+  for (int i = 0; i < 32; ++i)
+    if ((hwcap >> i) & 1) printf("%s ", CPUID_1_EDX[i]);
+}
+
 static void dump_aux(const AuxType *auxp) {
   assert(auxp && "Invalid input.");
   // The aux vector is read in dl_main (glibc:rtld.c).  The code below is
@@ -25,8 +43,8 @@ static void dump_aux(const AuxType *auxp) {
     // linux/fs/binfmt_elf.c is the best place to understand what data is going
     // where. See:
     // https://github.com/torvalds/linux/blob/f40ddce88593482919761f74910f42f4b84c004b/fs/binfmt_elf.c#L256
-#define CASE(_x)                                       \
-  case _x:                                             \
+#define CASE(_x)                                          \
+  case _x:                                                \
     printf("%-16s: " FMT_HEX "\n", #_x, aux->a_un.a_val); \
     break
     switch (aux->a_type) {
@@ -46,7 +64,6 @@ static void dump_aux(const AuxType *auxp) {
       CASE(AT_EGID);
       CASE(AT_CLKTCK);
       CASE(AT_PLATFORM);
-      CASE(AT_HWCAP);
       CASE(AT_FPUCW);
       CASE(AT_DCACHEBSIZE);
       CASE(AT_ICACHEBSIZE);
@@ -71,6 +88,12 @@ static void dump_aux(const AuxType *auxp) {
       CASE(AT_L3_CACHESIZE);
       CASE(AT_L3_CACHEGEOMETRY);
       CASE(AT_MINSIGSTKSZ);
+      case AT_HWCAP: {
+        printf("%-16s: (0x%-8x) -> [", "AT_HWCAP", (uint32_t)aux->a_un.a_val);
+        dump_x86_capabilities((uint32_t)aux->a_un.a_val);
+        printf("\b]\n");
+        break;
+      }
       case AT_RANDOM: {
         const uint8_t *c = (uint8_t *)aux->a_un.a_val;
         printf("%-16s: (%p) -> [", "AT_RANDOM", (void *)aux->a_un.a_val);
