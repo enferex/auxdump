@@ -64,7 +64,6 @@ static void dump_aux(const AuxType *auxp) {
       CASE(AT_GID);
       CASE(AT_EGID);
       CASE(AT_CLKTCK);
-      CASE(AT_PLATFORM);
       CASE(AT_FPUCW);
       CASE(AT_DCACHEBSIZE);
       CASE(AT_ICACHEBSIZE);
@@ -103,6 +102,12 @@ static void dump_aux(const AuxType *auxp) {
         if (cap & HWCAP2_RING3MWAIT) printf("RING3MWAIT ");
         if (cap & HWCAP2_FSGSBASE) printf("FSGSBASE ");
         printf("]\n");
+        break;
+      }
+      case AT_PLATFORM: {
+        const char *s = (const char *)aux->a_un.a_val;
+        printf("%-16s: (" FMT_HEX ") -> %s\n", "AT_PLATFORM", aux->a_un.a_val,
+               s ? s : "N/A");
         break;
       }
       case AT_RANDOM: {
