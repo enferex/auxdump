@@ -102,7 +102,7 @@ static void dump_aux(const AuxType *auxp) {
         // https://github.com/torvalds/linux/blob/2a1d7946fa53cea2083e5981ff55a8176ab2be6b/arch/x86/include/uapi/asm/hwcap2.h
         const uint32_t cap = aux->a_un.a_val;
         printf("%-16s: (0x%-8x) -> [", "AT_HWCAP2", cap);
-#define BIT(_x) ((_x)&1)
+#define BIT(_x) (1<<(_x))
         if (cap & HWCAP2_RING3MWAIT) printf("RING3MWAIT ");
         if (cap & HWCAP2_FSGSBASE) printf("FSGSBASE ");
         printf("]\n");
