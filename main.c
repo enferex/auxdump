@@ -71,7 +71,6 @@ static void dump_aux(const AuxType *auxp) {
       CASE(AT_IGNOREPPC);
       CASE(AT_SECURE);
       CASE(AT_BASE_PLATFORM);
-      CASE(AT_EXECFN);
       CASE(AT_SYSINFO);
       CASE(AT_SYSINFO_EHDR);
       CASE(AT_L1I_CACHESHAPE);
@@ -87,6 +86,11 @@ static void dump_aux(const AuxType *auxp) {
       CASE(AT_L3_CACHESIZE);
       CASE(AT_L3_CACHEGEOMETRY);
       CASE(AT_MINSIGSTKSZ);
+      case AT_EXECFN: {
+        printf("%-16s: (" FMT_HEX ") -> %s\n", "AT_EXECFN", aux->a_un.a_val,
+               (aux->a_un.a_val) ? (char *)aux->a_un.a_val : "N/A");
+        break;
+      }
       case AT_HWCAP: {
         printf("%-16s: (0x%-8x) -> [", "AT_HWCAP", (uint32_t)aux->a_un.a_val);
         dump_x86_capabilities((uint32_t)aux->a_un.a_val);
@@ -105,9 +109,8 @@ static void dump_aux(const AuxType *auxp) {
         break;
       }
       case AT_PLATFORM: {
-        const char *s = (const char *)aux->a_un.a_val;
         printf("%-16s: (" FMT_HEX ") -> %s\n", "AT_PLATFORM", aux->a_un.a_val,
-               s ? s : "N/A");
+               (aux->a_un.a_val) ? (char *)aux->a_un.a_val : "N/A");
         break;
       }
       case AT_RANDOM: {
