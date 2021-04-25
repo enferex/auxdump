@@ -12,7 +12,7 @@ typedef Elf32_auxv_t AuxType;
 #define FMT_HEX "0x%08x"
 #define FMT_DEC "%u"
 #else
-#error "This is tool is only supported on 32 and 64 bit X86 targets."
+#error "This tool is only supported on 32 and 64 bit X86 targets."
 #endif
 
 // The encoded CPUID values (represented in AT_HWCAP) are from the Intel manual
